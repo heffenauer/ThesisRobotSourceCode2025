@@ -1,0 +1,64 @@
+#include <AccelStepper.h>
+
+#define dirPin1 2
+#define stepPin1 3
+
+#define dirPin2 4
+#define stepPin2 5
+
+AccelStepper stepper1(AccelStepper::DRIVER, stepPin1, dirPin1);  // LEFT motor
+AccelStepper stepper2(AccelStepper::DRIVER, stepPin2, dirPin2);  // RIGHT motor
+
+void setup() {
+  Serial.begin(115200);
+
+  stepper1.setMaxSpeed(500); 
+  stepper1.setAcceleration(500);
+
+  stepper2.setMaxSpeed(500);
+  stepper2.setAcceleration(500);
+}
+
+void loop() {
+  if (Serial.available()) {
+    String command = Serial.readStringUntil('\n');
+    command.trim();
+
+    if (command == "f1") {
+      stepper1.moveTo(-1000000);  // Reversed for left motor
+    } 
+    else if (command == "f") {
+      stepper1.moveTo(-1000000);  // Reversed
+      stepper2.moveTo(1000000);
+    } 
+    else if (command == "r") {
+      stepper1.moveTo(1000000);   // Reversed
+      stepper2.moveTo(-1000000);
+    } 
+    else if (command == "s") {
+      stepper1.stop();
+      stepper2.stop();
+    } 
+    else if (command == "r1") {
+      stepper1.moveTo(1000000);   // Reversed
+    } 
+    else if (command == "stop1") {
+      stepper1.stop();  
+    } 
+    else if (command == "f2") {
+      stepper2.moveTo(1000000);  
+    } 
+    else if (command == "r2") {
+      stepper2.moveTo(-1000000);  
+    } 
+    else if (command == "s2") {
+      stepper2.stop();  
+    }
+    else if (command == "s1") {
+      stepper1.stop();  
+    }
+  }
+
+  stepper1.run();
+  stepper2.run();
+}
